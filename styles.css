@@ -1,0 +1,482 @@
+/* ზოგადი სტილები */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* ჰედერი */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 0 40px;
+  width: 1920px;
+  height: 80px;
+  border-bottom: 2px solid #ddd;
+  box-sizing: border-box;
+}
+
+/* ლოგო */
+.logo h1 {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #6a5acd;
+}
+
+
+/* ღილაკების კონტეინერი */
+.header-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+/* თანამშრომლის შექმნის ღილაკი (გამჭვირვალე ბორდერით) */
+.create-employee {
+  background: transparent;
+  border: 2px solid #6a5acd;
+  color: #6a5acd;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.create-employee:hover {
+  background: #6a5acd;
+  color: white;
+}
+
+/* ახალი დავალების ღილაკი */
+.create-task {
+  background: #6a5acd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.create-task:hover {
+  background: #5a4abd;
+}
+
+/* მთავარი კონტენტი */
+.tasks-page {
+  max-width: 1920px;
+  width: 100%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* გვერდის სათაური */
+.page-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-left: 38px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* ფილტრების კონტეინერის მარცხნივ განლაგება */
+.filters-container {
+  display: flex;
+  margin-left: 38px;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* ფილტრების ბლოკი */
+.filters {
+  display: flex;
+  gap: 45px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #6a5acd;
+  border: 2px solid gray;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 180px;
+}
+
+.filter {
+  display: flex;
+}
+
+/* Drop-down ისრის ხატულა */
+.filter-icon {
+  font-size: 24px;
+  margin-left: 10px;
+  color: #6a5acd;
+}
+
+/* სტატუსების კონტეინერი */
+.status-container {
+  display: flex;
+  justify-content: center;
+  /* ცენტრში მოთავსება */
+  align-items: center;
+  gap: 40px;
+  /* სტატუსებს შორის თანაბარი დაშორება */
+  margin-top: 30px;
+  width: 100%;
+}
+
+/* ინდივიდუალური სტატუსის ბლოკი */
+.status-box {
+  padding: 15px 40px;
+  margin-top: 48px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  border-radius: 20px;
+  text-align: center;
+  width: 352px;
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* თითოეული სტატუსის ფერები */
+.status-started {
+  background-color: #f4b400;
+  /* ყვითელი */
+}
+
+.status-in-progress {
+  background-color: #ff5722;
+  /* სტაფილოსფერი */
+}
+
+.status-ready-for-testing {
+  background-color: #ff007f;
+  /* ვარდისფერი */
+}
+
+.status-completed {
+  background-color: #4285f4;
+  /* ლურჯი */
+}
+
+/* დავალების ბარათის კონტეინერი */
+.task-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* დავალების ბარათი */
+.task-card {
+  width: 381px;
+  height: 217px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+  gap: 6px;
+  border-radius: 12px;
+  border: 2px solid #ccc;
+  overflow: hidden;
+}
+
+
+/* დავალების ჰედერი */
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.tasks-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* თითოეული სტატუსისთვის სვეტები */
+.task-column {
+  width: 23%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+/* სტატუსის სათაური */
+.status-title {
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  width: 390px;
+}
+
+/* დავალებების სია */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  align-items: center;
+}
+
+
+.task-priority {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid;
+}
+
+.priority-icon,
+.department-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 3px;
+  /* Reduce space between icon and text */
+}
+
+
+/* Department Styles */
+.task-status {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 14px;
+  color: white;
+}
+
+
+
+/* თარიღი */
+.task-date {
+  font-size: 14px;
+  color: #666;
+  font-weight: bold;
+}
+
+/* დავალების სათაური */
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* დავალების აღწერა */
+.task-description {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* ფუთერი (ავატარი და კომენტარები) */
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* მომხმარებლის ავატარი */
+.task-user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+/* კომენტარის ბლოკი */
+.task-comment-count {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.task-comment-count .material-symbols-outlined {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+/* თანამშრომლის მოდალი */
+.employee-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.employee-modal-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  width: 913px;
+  height: 766px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.employeeModal-footer {
+  display: flex;
+  justify-content: right;
+  align-content: flex-end;
+}
+
+.close-modal {
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  font-weight: 900;
+  color: white;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  cursor: pointer;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+
+.nameSurField {
+  display: flex;
+  justify-content: center;
+  gap: 88px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-group label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.fields {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+
+#lastName,
+#firstName {
+  width: 388px;
+  height: 42px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.profile-upload {
+  display: flex;
+  border: 1px dotted gray;
+  border-radius: 12px;
+  height: 120px;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 48px;
+  gap: 12px;
+}
+
+.cancel-button {
+  background: transparent;
+  color: #6a5acd;
+  border: 2px solid #6a5acd;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button {
+  background: #6a5acd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background: #5a4abd;
+}
