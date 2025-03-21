@@ -326,18 +326,17 @@ app.controller("TaskCreationController", function ($scope, $http, $location, Dat
     if ($scope.taskForm.$valid) {
       const API_URL = "https://momentum.redberryinternship.ge/api/tasks";
       const TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817";
-
-      const formData = new FormData();
-      formData.append("title", $scope.newTask.title);
-      formData.append("description", $scope.newTask.description);
-      formData.append("priority_id", $scope.newTask.priority.id);
-      formData.append("status_id", $scope.newTask.status.id);
-      formData.append("department_id", $scope.newTask.department.id);
-      formData.append("employee_id", $scope.newTask.employee.id);
-      formData.append("due_date", $scope.newTask.dueDate);
-
-      console.log("this is DUEDATE", $scope.newTask.dueDate)
-      $http.post(API_URL, formData, {
+      console.log($scope.newTask.employee)
+      const taskData = {
+        "name": "შექმენით readme ფაილი",
+        "description": "აღწერეთ შესრულებული დავალება რიდმი ფაილით",
+        "due_date": "2025-12-31",
+        "status_id": 1,
+        "employee_id": 1,
+        "priority_id": 1
+      };
+      console.log(taskData)
+      $http.post(API_URL, taskData, {
         headers: {
           "Authorization": "Bearer " + TOKEN,
           "Content-Type": undefined

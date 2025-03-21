@@ -60,7 +60,7 @@
         <div class="field-group" ng-show="newTask.department">
           <label for="employee">პასუხისმგებელი თანამშრომელი*</label>
           <select id="employee" ng-model="newTask.employee"
-            ng-options="employee.id as (employee.name + ' ' + employee.surname) for employee in filteredEmployees"
+            ng-options="employee as (employee.name + ' ' + employee.surname) for employee in filteredEmployees"
             required>
             <option value="">აირჩიეთ თანამშრომელი</option>
           </select>
