@@ -47,6 +47,7 @@ app.service("DataService", function ($rootScope) {
       if (callback) callback();
     }).catch(error => console.error("🚨 API Load Error:", error));
   }
+
   // Getter functions
   this.getStatuses = function () { return appData.statuses; };
   this.getPriorities = function () { return appData.priorities; };

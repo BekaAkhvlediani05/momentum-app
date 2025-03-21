@@ -15,14 +15,13 @@ app.config(function ($routeProvider) {
     });
 });
 
+
 app.run(function ($rootScope, $location) {
-  // Function to navigate to home page (tasks)
-  $rootScope.goToHome = function () {
-    $location.path('/tasks');
+  $rootScope.goToCreateTask = function () {
+    $location.path("/create-task");
   };
 
-  // Function to navigate to task creation page
-  $rootScope.goToCreateTask = function () {
-    $location.path('/create-task');
+  $rootScope.goToHome = function () {
+    $location.path("/tasks");
   };
 });
