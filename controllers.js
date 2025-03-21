@@ -1,5 +1,11 @@
 app.controller("TaskController", function ($scope, $http, $location, DataService) {
   // Load Data on Page Load
+
+  function loadTasks() {
+    $scope.tasks = DataService.getTasks();
+    console.log("📌 Updated Task List:", $scope.tasks);
+  }
+
   DataService.loadData(function () {
     $scope.$applyAsync(function () {
       $scope.tasks = DataService.getTasks();
@@ -7,6 +13,7 @@ app.controller("TaskController", function ($scope, $http, $location, DataService
       $scope.priorities = DataService.getPriorities();
       $scope.departments = DataService.getDepartments();
       $scope.employees = DataService.getEmployees();
+      loadTasks();
 
       console.log("📌 Tasks Loaded:", $scope.tasks);
       console.log("📌 Statuses:", $scope.statuses);
@@ -44,6 +51,7 @@ app.controller("TaskController", function ($scope, $http, $location, DataService
     return department ? department.name : "უცნობი დეპარტამენტი";
   };
 
+
   // Function to get task border color based on status
   $scope.getTaskBorderColor = function (statusId) {
     switch (statusId) {
@@ -78,62 +86,47 @@ app.controller("TaskController", function ($scope, $http, $location, DataService
 
   // **თანამშრომლის შენახვა**
   $scope.saveEmployee = function () {
-    // Check if required fields are filled
     if (!$scope.newEmployee.firstName || !$scope.newEmployee.lastName || !$scope.newEmployee.department) {
       alert("❌ გთხოვთ, შეავსოთ ყველა სავალდებულო ველი!");
       return;
     }
 
-    // Prepare the API URL and token
     var API_URL = "https://momentum.redberryinternship.ge/api/employees";
-    var TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817"; // ✅ API Token
+    var TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817";
 
-    // Create a new FormData object to send the data
     var formData = new FormData();
-    formData.append("name", $scope.newEmployee.firstName); // Correct field name for first name
-    formData.append("surname", $scope.newEmployee.lastName); // Correct field name for surname
-    formData.append("department_id", $scope.newEmployee.department.id); // Correct field for department_id
+    formData.append("name", $scope.newEmployee.firstName);
+    formData.append("surname", $scope.newEmployee.lastName);
+    formData.append("department_id", $scope.newEmployee.department.id);
 
-    // Add avatar file if selected
     if ($scope.newEmployee.avatarFile) {
-      formData.append("avatar", $scope.newEmployee.avatarFile, $scope.newEmployee.avatarFile.name); // Correct field for avatar
-    } else {
-      alert("❌ გთხოვთ, აირჩიოთ სურათი!");
-      return;
+      formData.append("avatar", $scope.newEmployee.avatarFile, $scope.newEmployee.avatarFile.name);
     }
 
-
-
-    // Set up the request config with Authorization and Content-Type headers
-    var config = {
+    $http.post(API_URL, formData, {
       headers: {
         "Authorization": "Bearer " + TOKEN,
-        "Content-Type": undefined // Important: FormData should not have a content-type, it is handled automatically
+        "Content-Type": undefined
       }
-    };
+    }).then(function (response) {
+      console.log("✔ თანამშრომელი წარმატებით დაემატა:", response.data); // ✅ Debugging
+      alert("✅ თანამშრომელი წარმატებით დაემატა!");
 
-    // Send the POST request to the API
-    $http.post(API_URL, formData, config)
-      .then(function (response) {
-        console.log("✔ თანამშრომელი წარმატებით დაემატა:", response.data);
-        alert("✅ თანამშრომელი წარმატებით დაემატა!");
-
-        // Update the list of departments and employees from the API
-        DataService.loadData(function () {
-          $scope.$apply(function () {
-            $scope.departments = DataService.getDepartments();
-            $scope.employees = DataService.getEmployees();
-          });
+      // Reload Employees from API
+      DataService.loadData(function () {
+        $scope.$applyAsync(function () {
+          $scope.employees = DataService.getEmployees();
+          console.log("📌 Updated Employees After Creation:", $scope.employees); // ✅ Debugging
         });
-
-        // Close the modal
-        $scope.closeEmployeeModal();
-      })
-      .catch(function (error) {
-        console.error("🚨 თანამშრომლის დამატების შეცდომა:", error);
-        alert("❌ თანამშრომლის დამატება ვერ მოხერხდა.");
       });
+
+      $scope.closeEmployeeModal();
+    }).catch(function (error) {
+      console.error("🚨 თანამშრომლის დამატების შეცდომა:", error);
+      alert("❌ თანამშრომლის დამატება ვერ მოხერხდა.");
+    });
   };
+
 
 
 
@@ -318,9 +311,11 @@ app.controller("TaskController", function ($scope, $http, $location, DataService
     $scope.$watch("newTask.department", function (newValue) {
       if (newValue) {
         $scope.filteredEmployees = $scope.employees.filter(employee => employee.department_id === newValue.id);
+        console.log("📌 Filtered Employees:", $scope.filteredEmployees);
         $scope.newTask.employee = null;
       }
     });
+
 
     // Task submission function
     $scope.submitTask = function () {
@@ -359,9 +354,12 @@ app.controller("TaskController", function ($scope, $http, $location, DataService
     };
   });
 })
+
+
 app.controller("TaskCreationController", function ($scope, $http, $location, DataService) {
   console.log("✅ TaskCreationController Loaded!");
 
+  // ✅ Initialize task object
   $scope.newTask = {
     title: "",
     description: "",
@@ -372,32 +370,33 @@ app.controller("TaskCreationController", function ($scope, $http, $location, Dat
     dueDate: new Date().toISOString().split("T")[0]
   };
 
-  // Load Priorities, Statuses, and Departments from API
+  // ✅ Load Priorities, Statuses, and Departments
   DataService.loadData(function () {
     $scope.$applyAsync(function () {
       $scope.priorities = DataService.getPriorities();
       $scope.statuses = DataService.getStatuses();
       $scope.departments = DataService.getDepartments();
-      $scope.employees = DataService.getEmployees();
+      $scope.employees = DataService.getEmployees(); // ✅ Fetch all employees
 
-      console.log("📌 Priorities:", $scope.priorities);
-      console.log("📌 Statuses:", $scope.statuses);
-      console.log("📌 Departments:", $scope.departments);
-      console.log("📌 Employees:", $scope.employees);
+      console.log("📌 Employees in Task Creation:", $scope.employees);
     });
   });
 
-  // Filter employees based on selected department
+  // ✅ Watch for department selection and filter employees
   $scope.$watch("newTask.department", function (newValue) {
-    if (newValue) {
-      $scope.filteredEmployees = $scope.employees.filter(employee => employee.department_id === newValue.id);
-      console.log("Filtered Employees:", $scope.filteredEmployees);
+    if (newValue && newValue.id) {
+      console.log("employees are here", $scope.employees)
+      $scope.filteredEmployees = $scope.employees.filter(
+        employee => employee.department.id === newValue.id
+      );
+
+      console.log("📌 Filtered Employees for Department:", newValue.id, $scope.filteredEmployees);
       $scope.newTask.employee = null; // Reset employee selection
     }
   });
 
 
-  // Function to submit the task
+  // ✅ Task submission function
   $scope.submitTask = function () {
     if ($scope.taskForm.$valid) {
       const API_URL = "https://momentum.redberryinternship.ge/api/tasks";
@@ -406,8 +405,8 @@ app.controller("TaskCreationController", function ($scope, $http, $location, Dat
       const formData = new FormData();
       formData.append("title", $scope.newTask.title);
       formData.append("description", $scope.newTask.description);
-      formData.append("priority_id", $scope.newTask.priority.id); // Fix priority field
-      formData.append("status_id", $scope.newTask.status.id); // Fix status field
+      formData.append("priority_id", $scope.newTask.priority.id);
+      formData.append("status_id", $scope.newTask.status.id);
       formData.append("department_id", $scope.newTask.department.id);
       formData.append("employee_id", $scope.newTask.employee.id);
       formData.append("due_date", $scope.newTask.dueDate);

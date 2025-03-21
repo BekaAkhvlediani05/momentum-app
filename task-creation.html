@@ -56,20 +56,25 @@
         </div>
 
         <!-- პასუხისმგებელი თანამშრომელი -->
+        <!-- პასუხიმსგებელი თანამშრომელი -->
         <div class="field-group" ng-show="newTask.department">
           <label for="employee">პასუხისმგებელი თანამშრომელი*</label>
           <select id="employee" ng-model="newTask.employee"
-            ng-options="employee as (employee.name + ' ' + employee.surname) for employee in filteredEmployees"
+            ng-options="employee.id as (employee.name + ' ' + employee.surname) for employee in filteredEmployees"
             required>
             <option value="">აირჩიეთ თანამშრომელი</option>
           </select>
         </div>
 
 
+
+
         <!-- დედლაინი -->
         <div class="field-group">
           <label for="dueDate">დედლაინი*</label>
-          <input type="date" id="dueDate" ng-model="newTask.dueDate" min="{{ getMinDate() }}" required>
+          <input type="date" id="dueDate" ng-model="newTask.dueDate"
+            ng-change="newTask.dueDate = formatDate(newTask.dueDate)" required>
+
         </div>
 
         <!-- Submit Button -->
