@@ -1,4 +1,4 @@
-app.controller("TaskController", function ($scope, DataService, $http) {
+app.controller("TaskController", function ($scope, DataService, $http, $location) {
   // მონაცემების ჩატვირთვა
   DataService.loadData(function () {
     $scope.$apply(function () {
@@ -10,8 +10,69 @@ app.controller("TaskController", function ($scope, DataService, $http) {
       console.log("📌 Statuses Loaded:", $scope.statuses);
       $scope.departments = DataService.getDepartments();
       console.log("📌 Departments Loaded:", $scope.departments);
+      $scope.filteredEmployees = [];
     });
   });
+
+  // Model for new task
+  $scope.newTask = {
+    title: "",
+    description: "",
+    priority: "საშუალო",  // Default to "Medium"
+    status: "დასაწყები",  // Default to "Started"
+    department: null,
+    employee: null,
+    dueDate: new Date().toISOString().split('T')[0]  // Default to tomorrow
+  };
+
+  // Filter employees based on selected department
+  $scope.$watch('newTask.department', function (newValue) {
+    if (newValue) {
+      // Filter employees by selected department
+      $scope.filteredEmployees = $scope.employees.filter(employee => employee.department_id === newValue.id);
+      $scope.newTask.employee = null;  // Clear previous employee selection
+    }
+  });
+
+  // Ensure the minimum date is tomorrow
+  $scope.getMinDate = function () {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+
+  // Function to submit the task form
+  $scope.submitTask = function () {
+    if ($scope.taskForm.$valid) {
+      const API_URL = "https://momentum.redberryinternship.ge/api/tasks";
+      const TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817";  // Your API token
+
+      const formData = new FormData();
+      formData.append("title", $scope.newTask.title);
+      formData.append("description", $scope.newTask.description);
+      formData.append("priority", $scope.newTask.priority);
+      formData.append("status", $scope.newTask.status);
+      formData.append("department_id", $scope.newTask.department.id);
+      formData.append("employee_id", $scope.newTask.employee.id);
+      formData.append("due_date", $scope.newTask.dueDate);
+
+      $http.post(API_URL, formData, {
+        headers: {
+          "Authorization": "Bearer " + TOKEN,
+          "Content-Type": undefined
+        }
+      }).then(function (response) {
+        // Handle successful task creation
+        alert("✅ დავალება წარმატებით დაემატა!");
+        $location.path('/tasks');  // Redirect to task list page (adjust path as needed)
+      }).catch(function (error) {
+        console.error("🚨 Error creating task:", error);
+        alert("❌ დავალების დამატება ვერ მოხერხდა.");
+      });
+    } else {
+      alert("❌ გთხოვთ, შეავსოთ ყველა სავალდებულო ველი!");
+    }
+  };
 
   // **📌 თანამშრომლის დამატების მოდალის მენეჯმენტი**
   $scope.isEmployeeModalOpen = false;
