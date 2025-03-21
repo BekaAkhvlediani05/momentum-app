@@ -5,17 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Momentum Tasks</title>
-
-  <!-- Google Fonts & Icons -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- AngularJS -->
+  <!-- AngularJS and ngRoute -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
 
-
   <!-- Custom Scripts -->
-  <script src="data.js"></script>
   <script src="app.js"></script>
   <script src="services.js"></script>
   <script src="controllers.js"></script>
@@ -24,42 +20,53 @@
 <body ng-controller="TaskController">
   <header>
     <div class="logo">
-      <img src="assets/Logo.png" alt="">
+      <img src="assets/Logo.png" alt="Momentum Logo">
     </div>
     <div class="header-buttons">
       <button class="create-employee" ng-click="openEmployeeModal()">თანამშრომლის შექმნა</button>
 
-      <button class="create-task">+ შექმენი ახალი დავალება</button>
+      <button class="create-task" ng-click="goToCreateTask()">+ შექმენი ახალი დავალება</button>
     </div>
   </header>
+
+  <!-- This is where tasks.html and task-creation.html will be loaded -->
+  <div ng-view></div>
+
+  <!-- Employee Modal -->
   <div class="employee-modal" ng-show="isEmployeeModalOpen">
     <div class="employee-modal-container">
       <div class="employee-modal-content">
         <button class="close-modal" ng-click="closeEmployeeModal()">×</button>
         <h2 class="modal-title">თანამშრომლის დამატება</h2>
+
         <div class="nameSurField">
           <div class="field-group">
             <label for="firstName">სახელი*</label>
-            <input type="text" id="firstName" ng-model="newEmployee.firstName">
+            <input type="text" id="firstName" ng-model="newEmployee.firstName" required>
             <p>მინიმუმ 2 სიმბოლო</p>
           </div>
+
 
           <div class="field-group">
             <label for="lastName">გვარი*</label>
-            <input type="text" id="lastName" ng-model="newEmployee.lastName">
+            <input type="text" id="lastName" ng-model="newEmployee.lastName" required>
             <p>მინიმუმ 2 სიმბოლო</p>
           </div>
         </div>
+
         <div class="field-group">
           <label>ავატარი*</label>
-          <div class="profile-upload">
-            <img ng-src="{{ newEmployee.avatar || 'assets/default-avatar.png' }}" class="profile-preview">
-            <input type="file" id="avatarUpload" accept="image/*"
-              onchange="angular.element(this).scope().uploadAvatar(this)">
-          </div>
-          <p class="error-text" ng-show="avatarError">{{avatarError}}</p>
-        </div>
+          <div class="profile-upload" ng-click="triggerFileInput()">
+            <!-- ✅ Show uploaded image OR default text -->
+            <img ng-if="newEmployee.avatar" ng-src="{{ newEmployee.avatar }}" class="profile-preview">
+            <span ng-if="!newEmployee.avatar" class="upload-text">Upload Image</span>
 
+            <!-- ✅ Hidden file input -->
+            <input type="file" id="avatarUpload" accept="image/*"
+              onchange="angular.element(this).scope().uploadAvatar(this)" hidden>
+          </div>
+          <p class="error-text" ng-show="avatarError">{{ avatarError }}</p>
+        </div>
 
 
         <div class="field-group">
@@ -68,83 +75,14 @@
             <option value="">აირჩიეთ დეპარტამენტი</option>
           </select>
         </div>
-      </div>
 
-      <div class="employeeModal-footer">
-        <div class="modal-actions">
+        <div class="employeeModal-footer">
           <button class="cancel-button" ng-click="closeEmployeeModal()">გაუქმება</button>
           <button class="submit-button" ng-click="saveEmployee()">დაამატე თანამშრომელი</button>
         </div>
       </div>
     </div>
   </div>
-  </div>
-  <main class="tasks-page">
-    <!-- გვერდის სათაური -->
-    <h1 class="page-title">დავალებების გვერდი</h1>
-
-    <!-- ფილტრების ბლოკი (მარცხნივ განლაგებული) -->
-    <div class="filters-container">
-      <div class="filters">
-        <div class="filter">
-          <span>დეპარტამენტი</span>
-          <span class="material-icons filter-icon">arrow_drop_down</span>
-        </div>
-        <div class="filter">
-          <span>პრიორიტეტი</span>
-          <span class="material-icons filter-icon">arrow_drop_down</span>
-        </div>
-        <div class="filter">
-          <span>თანამშრომელი</span>
-          <span class="material-icons filter-icon">arrow_drop_down</span>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <main class="tasks-page" ng-controller="TaskController">
-    <div class="tasks-container">
-      <div class="task-column" ng-repeat="status in statuses">
-        <h2 class="status-title" ng-class="getStatusClass(status.name)">{{ status.name }}</h2>
-        <div class="task-list">
-          <div class="task-card" ng-repeat="task in tasks | filter:{status_id: status.id}"
-            ng-style="{'border': '2px solid ' + getTaskBorderColor(task.status_id)}">
-
-
-            <div class="task-header">
-
-
-              <span class="task-priority" ng-style="{'border-color': getPriorityColor(task.priority_id).border, 
-                    'color': getPriorityColor(task.priority_id).text}">
-                {{ getPriority(task.priority_id).name || "MISSING" }}
-              </span>
-
-
-              <span class="task-status" ng-style="{'background': getDepartmentColor(task.department_id)}">
-                {{ getDepartment(task.department_id).name }}
-              </span>
-
-
-
-              <span class="task-date">{{ task.due_date }}</span>
-            </div>
-
-            <h3 class="task-title">{{ task.title }}</h3>
-            <p class="task-description">{{ task.description }}</p>
-
-            <div class="task-footer">
-              <img ng-src="assets/profile.jpeg" alt="User" class="task-user-avatar">
-              <span class="task-comment-count">
-                <span class="material-icons">chat_bubble</span> {{ task.comments }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-  </main>
 
 </body>
 

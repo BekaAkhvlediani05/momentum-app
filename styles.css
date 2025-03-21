@@ -47,6 +47,7 @@ header {
   color: #6a5acd;
   padding: 10px 20px;
   font-size: 16px;
+  width: 280px;
   cursor: pointer;
   border-radius: 5px;
   transition: all 0.3s ease;
@@ -62,6 +63,7 @@ header {
   background: #6a5acd;
   color: white;
   border: none;
+  width: 280px;
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
@@ -366,10 +368,12 @@ header {
 }
 
 .close-modal {
+  display: flex;
   align-items: center;
+  justify-content: center;
   width: 40px;
   height: 40px;
-  font-weight: 900;
+  font-weight: bolder;
   color: white;
   position: absolute;
   top: 20px;
@@ -438,19 +442,34 @@ select {
 
 .profile-upload {
   display: flex;
-  border: 1px dotted gray;
-  border-radius: 12px;
-  height: 120px;
   align-items: center;
+  justify-content: center;
   gap: 15px;
+  width: 120px;
+  height: 120px;
+  border: 2px dashed gray;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  background-color: #f3f4f6;
+  overflow: hidden;
 }
 
 .profile-preview {
-  width: 80px;
-  height: 80px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
+  position: absolute;
 }
+
+.upload-text {
+  font-size: 14px;
+  color: gray;
+  text-align: center;
+  z-index: 2;
+}
+
 
 .modal-actions {
   display: flex;

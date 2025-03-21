@@ -1,0 +1,62 @@
+<head>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<!-- Task Page (tasks.html) -->
+<main class="tasks-page">
+  <h1 class="page-title">დავალებების გვერდი</h1>
+
+  <!-- Filters Block -->
+  <div class="filters-container">
+    <div class="filters">
+      <div class="filter">
+        <span>დეპარტამენტი</span>
+        <span class="material-icons filter-icon">arrow_drop_down</span>
+      </div>
+      <div class="filter">
+        <span>პრიორიტეტი</span>
+        <span class="material-icons filter-icon">arrow_drop_down</span>
+      </div>
+      <div class="filter">
+        <span>თანამშრომელი</span>
+        <span class="material-icons filter-icon">arrow_drop_down</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tasks-container">
+    <div class="task-column" ng-repeat="status in statuses">
+      <h2 class="status-title" ng-class="getStatusClass(status.name)">{{ status.name }}</h2>
+      <div class="task-list">
+        <div class="task-card" ng-repeat="task in tasks | filter:{status_id: status.id}"
+          ng-style="{'border': '2px solid ' + getTaskBorderColor(task.status_id)}">
+          <div class="task-header">
+            <span class="task-priority" ng-style="{'border-color': getPriorityColor(task.priority_id).border, 
+                    'color': getPriorityColor(task.priority_id).text}">
+              {{ getPriority(task.priority_id).name || "MISSING" }}
+            </span>
+            <span class="task-status" ng-style="{'background': getDepartmentColor(task.department_id)}">
+              {{ getDepartment(task.department_id).name }}
+            </span>
+            <span class="task-date">{{ task.due_date }}</span>
+          </div>
+          <h3 class="task-title">{{ task.title }}</h3>
+          <p class="task-description">{{ task.description }}</p>
+          <div class="task-footer">
+            <img ng-src="assets/profile.jpeg" alt="User" class="task-user-avatar">
+            <span class="task-comment-count">
+              <span class="material-icons">chat_bubble</span> {{ task.comments }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</main>
+
+</body>
+
+</html>

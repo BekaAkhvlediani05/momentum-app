@@ -1,28 +1,23 @@
-// Include ngRoute dependency
-var app = angular.module("momentumApp", ['ngRoute']);
+var app = angular.module('momentumApp', ['ngRoute']);
 
-// Routing configuration
 app.config(function ($routeProvider) {
   $routeProvider
-    .when('/create-task', {
-      templateUrl: 'task-creation.html',
-      controller: 'TaskCreationController'
-    })
     .when('/tasks', {
       templateUrl: 'tasks.html',
       controller: 'TaskController'
+    })
+    .when('/create-task', {
+      templateUrl: 'task-creation.html',
+      controller: 'TaskCreationController'
     })
     .otherwise({
       redirectTo: '/tasks'
     });
 });
 
-// TaskCreationController definition
-app.controller('TaskCreationController', function ($scope) {
-  // Controller logic for task creation
-});
-
-// TaskController definition
-app.controller('TaskController', function ($scope) {
-  // Controller logic for viewing tasks
+// Function to navigate to task creation page
+app.run(function ($rootScope, $location) {
+  $rootScope.goToCreateTask = function () {
+    $location.path('/create-task');
+  };
 });

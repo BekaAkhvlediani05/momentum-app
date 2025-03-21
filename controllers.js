@@ -1,95 +1,103 @@
 app.controller("TaskController", function ($scope, DataService, $http, $location) {
-  // მონაცემების ჩატვირთვა
+  // Load tasks from the DataService
   DataService.loadData(function () {
     $scope.$apply(function () {
       $scope.tasks = DataService.getTasks();
-      console.log("📌 Tasks Loaded:", $scope.tasks);
-      $scope.priorities = DataService.getPriorities();
-      console.log("📌 Priorities Loaded:", $scope.priorities);
       $scope.statuses = DataService.getStatuses();
-      console.log("📌 Statuses Loaded:", $scope.statuses);
+      $scope.priorities = DataService.getPriorities();
       $scope.departments = DataService.getDepartments();
-      console.log("📌 Departments Loaded:", $scope.departments);
-      $scope.filteredEmployees = [];
+      $scope.employees = DataService.getEmployees();
     });
   });
 
-  // Model for new task
-  $scope.newTask = {
-    title: "",
-    description: "",
-    priority: "საშუალო",  // Default to "Medium"
-    status: "დასაწყები",  // Default to "Started"
-    department: null,
-    employee: null,
-    dueDate: new Date().toISOString().split('T')[0]  // Default to tomorrow
-  };
-
-  // Filter employees based on selected department
-  $scope.$watch('newTask.department', function (newValue) {
-    if (newValue) {
-      // Filter employees by selected department
-      $scope.filteredEmployees = $scope.employees.filter(employee => employee.department_id === newValue.id);
-      $scope.newTask.employee = null;  // Clear previous employee selection
-    }
-  });
-
-  // Ensure the minimum date is tomorrow
-  $scope.getMinDate = function () {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
-  };
-
-  // Function to submit the task form
-  $scope.submitTask = function () {
-    if ($scope.taskForm.$valid) {
-      const API_URL = "https://momentum.redberryinternship.ge/api/tasks";
-      const TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817";  // Your API token
-
-      const formData = new FormData();
-      formData.append("title", $scope.newTask.title);
-      formData.append("description", $scope.newTask.description);
-      formData.append("priority", $scope.newTask.priority);
-      formData.append("status", $scope.newTask.status);
-      formData.append("department_id", $scope.newTask.department.id);
-      formData.append("employee_id", $scope.newTask.employee.id);
-      formData.append("due_date", $scope.newTask.dueDate);
-
-      $http.post(API_URL, formData, {
-        headers: {
-          "Authorization": "Bearer " + TOKEN,
-          "Content-Type": undefined
-        }
-      }).then(function (response) {
-        // Handle successful task creation
-        alert("✅ დავალება წარმატებით დაემატა!");
-        $location.path('/tasks');  // Redirect to task list page (adjust path as needed)
-      }).catch(function (error) {
-        console.error("🚨 Error creating task:", error);
-        alert("❌ დავალების დამატება ვერ მოხერხდა.");
-      });
-    } else {
-      alert("❌ გთხოვთ, შეავსოთ ყველა სავალდებულო ველი!");
-    }
-  };
-
   // **📌 თანამშრომლის დამატების მოდალის მენეჯმენტი**
   $scope.isEmployeeModalOpen = false;
-  $scope.newEmployee = {}; // თანამშრომლის მონაცემები
 
-  // **ღილაკზე დაჭერისას მოდალის გახსნა**
   $scope.openEmployeeModal = function () {
     console.log("✅ თანამშრომლის დამატების ფანჯარა გაიხსნა!");
     $scope.isEmployeeModalOpen = true;
   };
 
-  // **მოდალის დახურვა**
   $scope.closeEmployeeModal = function () {
     console.log("❌ თანამშრომლის დამატების ფანჯარა დაიხურა!");
     $scope.isEmployeeModalOpen = false;
-    $scope.newEmployee = {}; // მონაცემების გასუფთავება
   };
+
+  // ✅ Function to navigate to task creation page
+  $scope.createNewTask = function () {
+    console.log("✅ Navigating to Task Creation Page...");
+    $location.path("/create-task");
+  };
+
+
+  app.controller('TaskCreationController', function ($scope, $http, $location, DataService) {
+    // Initialize the newTask object to bind form fields
+    $scope.newTask = {
+      title: "",
+      description: "",
+      priority: "საშუალო", // Default priority
+      status: "დასაწყები", // Default status
+      department: null,
+      employee: null,
+      dueDate: new Date().toISOString().split('T')[0] // Default to today's date
+    };
+
+    // Fetch priorities and statuses
+    DataService.loadData(function () {
+      $scope.priorities = DataService.getPriorities();
+      $scope.statuses = DataService.getStatuses();
+      $scope.departments = DataService.getDepartments();
+      console.log("📌 Priorities, Statuses, and Departments Loaded");
+    });
+
+    // Function to filter employees by department
+    $scope.$watch('newTask.department', function (newValue) {
+      if (newValue) {
+        $scope.filteredEmployees = $scope.employees.filter(employee => employee.department_id === newValue.id);
+        $scope.newTask.employee = null; // Reset employee if department is changed
+      }
+    });
+
+    // Function to submit the task form
+    $scope.submitTask = function () {
+      if ($scope.taskForm.$valid) {
+        const API_URL = "https://momentum.redberryinternship.ge/api/tasks";
+        const TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817";  // Your API token
+
+        const formData = new FormData();
+        formData.append("title", $scope.newTask.title);
+        formData.append("description", $scope.newTask.description);
+        formData.append("priority", $scope.newTask.priority);
+        formData.append("status", $scope.newTask.status);
+        formData.append("department_id", $scope.newTask.department.id);
+        formData.append("employee_id", $scope.newTask.employee.id);
+        formData.append("due_date", $scope.newTask.dueDate);
+
+        $http.post(API_URL, formData, {
+          headers: {
+            "Authorization": "Bearer " + TOKEN,
+            "Content-Type": undefined // Important for FormData
+          }
+        }).then(function (response) {
+          // Success: Show success alert and reload tasks
+          alert("✅ Task created successfully!");
+          // Now update the tasks list
+          DataService.loadData(function () {
+            $scope.$apply(function () {
+              // After data is reloaded, the tasks will be updated on the main page.
+              $location.path('/tasks');  // Redirect to the tasks page
+            });
+          });
+        }).catch(function (error) {
+          console.error("🚨 Error creating task:", error);
+          alert("❌ Failed to create task.");
+        });
+      } else {
+        alert("❌ Please fill in all required fields.");
+      }
+    };
+  });
+
 
   // **თანამშრომლის შენახვა**
   $scope.saveEmployee = function () {
@@ -116,6 +124,8 @@ app.controller("TaskController", function ($scope, DataService, $http, $location
       alert("❌ გთხოვთ, აირჩიოთ სურათი!");
       return;
     }
+
+
 
     // Set up the request config with Authorization and Content-Type headers
     var config = {
@@ -154,28 +164,41 @@ app.controller("TaskController", function ($scope, DataService, $http, $location
     let status = $scope.statuses.find(s => s.id === statusId);
     return status ? status.name : "უცნობი სტატუსი";
   };
-  $scope.uploadAvatar = function (element) {
-    var file = element.files[0];
-    if (file) {
-      if (!file.type.match("image.*")) {
-        $scope.$apply(() => { $scope.avatarError = "❌ ფაილი უნდა იყოს სურათის ფორმატში."; });
-        return;
-      }
-      if (file.size > 600 * 1024) {
-        $scope.$apply(() => { $scope.avatarError = "❌ სურათი არ უნდა აღემატებოდეს 600KB-ს."; });
-        return;
-      }
 
-      $scope.$apply(() => {
-        $scope.newEmployee.avatarFile = file; // ✅ პირდაპირ ვინახავთ ფაილს
-        $scope.newEmployee.avatar = URL.createObjectURL(file); // ✅ ვქმნით პრევიუს
-        $scope.avatarError = "";
-      });
-    }
+  // ✅ Avatar Upload Functionality
+  $scope.triggerFileInput = function () {
+    document.getElementById("avatarUpload").click();
   };
 
+  $scope.uploadAvatar = function (element) {
+    var file = element.files[0];
 
+    if (!file) return;
 
+    if (!file.type.match("image.*")) {
+      $scope.avatarError = "❌ ფაილი უნდა იყოს სურათის ფორმატში.";
+      $scope.$apply(); // Ensure changes are detected
+      return;
+    }
+
+    if (file.size > 600 * 1024) {
+      $scope.avatarError = "❌ სურათი არ უნდა აღემატებოდეს 600KB-ს.";
+      $scope.$apply(); // Ensure changes are detected
+      return;
+    }
+
+    // ✅ Ensure `newEmployee` exists
+    if (!$scope.newEmployee) {
+      $scope.newEmployee = {};
+    }
+
+    // ✅ Wrap inside `$scope.$applyAsync()` to avoid `$apply()` conflict
+    $scope.$applyAsync(() => {
+      $scope.newEmployee.avatarFile = file;
+      $scope.newEmployee.avatar = URL.createObjectURL(file);
+      $scope.avatarError = "";
+    });
+  };
 
 
   $scope.getStatusClass = function (statusName) {

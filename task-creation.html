@@ -1,104 +1,18 @@
-<!DOCTYPE html>
-<html lang="ka" ng-app="momentumApp">
+<div class="task-creation-container">
+  <h2>დავალების შექმნა</h2>
+  <form name="taskForm" novalidate ng-submit="submitTask()">
+    <div class="field-group">
+      <label for="taskTitle">სათაური*</label>
+      <input type="text" id="taskTitle" ng-model="newTask.title" required>
+    </div>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>დავალების შექმნა</title>
+    <div class="field-group">
+      <label for="priority">პრიორიტეტი*</label>
+      <select id="priority" ng-model="newTask.priority" ng-options="priority.name for priority in priorities" required>
+        <option value="">აირჩიეთ პრიორიტეტი</option>
+      </select>
+    </div>
 
-  <!-- Google Fonts & Icons -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="styles.css">
-
-  <!-- AngularJS -->
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
-  <!-- Custom Scripts -->
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-  <script src="services.js"></script>
-  <script src="controllers.js"></script>
-</head>
-
-<body ng-controller="TaskCreationController">
-
-  <!-- Task Creation Form -->
-  <div class="task-creation-container">
-    <h2>დავალების შექმნა</h2>
-    <form name="taskForm" novalidate ng-submit="submitTask()">
-      <!-- Title -->
-      <div class="field-group">
-        <label for="taskTitle">სათაური*</label>
-        <input type="text" id="taskTitle" ng-model="newTask.title" ng-minlength="3" ng-maxlength="255" required>
-        <p class="error-message" ng-show="taskForm.taskTitle.$error.required && taskForm.taskTitle.$dirty">სათაური
-          სავალდებულოა</p>
-        <p class="error-message" ng-show="taskForm.taskTitle.$error.minlength && taskForm.taskTitle.$dirty">მინიმუმ 3
-          სიმბოლო</p>
-      </div>
-
-      <!-- Description -->
-      <div class="field-group">
-        <label for="taskDescription">აღწერა</label>
-        <textarea id="taskDescription" ng-model="newTask.description" ng-minlength="4" ng-maxlength="255"></textarea>
-        <p class="error-message" ng-show="taskForm.taskDescription.$error.minlength && taskForm.taskDescription.$dirty">
-          მინიმუმ 4 სიტყვა</p>
-      </div>
-
-      <!-- Priority -->
-      <div class="field-group">
-        <label for="priority">პრიორიტეტი*</label>
-        <select id="priority" ng-model="newTask.priority" ng-options="priority.name for priority in priorities"
-          required>
-          <option value="">აირჩიეთ პრიორიტეტი</option>
-        </select>
-        <p class="error-message" ng-show="taskForm.priority.$error.required && taskForm.priority.$dirty">პრიორიტეტი
-          სავალდებულოა</p>
-      </div>
-
-      <!-- Status -->
-      <div class="field-group">
-        <label for="status">სტატუსი*</label>
-        <select id="status" ng-model="newTask.status" ng-options="status.name for status in statuses" required>
-          <option value="">აირჩიეთ სტატუსი</option>
-        </select>
-        <p class="error-message" ng-show="taskForm.status.$error.required && taskForm.status.$dirty">სტატუსი
-          სავალდებულოა</p>
-      </div>
-
-      <!-- Department -->
-      <div class="field-group">
-        <label for="department">დეპარტამენტი*</label>
-        <select id="department" ng-model="newTask.department" ng-options="department.name for department in departments"
-          ng-change="resetEmployeeField()" required>
-          <option value="">აირჩიეთ დეპარტამენტი</option>
-        </select>
-        <p class="error-message" ng-show="taskForm.department.$error.required && taskForm.department.$dirty">
-          დეპარტამენტი სავალდებულოა</p>
-      </div>
-
-      <!-- Responsible Employee (will show after department selection) -->
-      <div class="field-group" ng-show="newTask.department">
-        <label for="employee">პასუხისმგებელი თანამშრომელი*</label>
-        <select id="employee" ng-model="newTask.employee" ng-options="employee.name for employee in filteredEmployees"
-          required>
-          <option value="">აირჩიეთ თანამშრომელი</option>
-        </select>
-        <p class="error-message" ng-show="taskForm.employee.$error.required && taskForm.employee.$dirty">თანამშრომელი
-          სავალდებულოა</p>
-      </div>
-
-      <!-- Deadline -->
-      <div class="field-group">
-        <label for="dueDate">დედლაინი*</label>
-        <input type="date" id="dueDate" ng-model="newTask.dueDate" min="{{getMinDate()}}" required>
-        <p class="error-message" ng-show="taskForm.dueDate.$error.required && taskForm.dueDate.$dirty">დედლაინი
-          სავალდებულოა</p>
-      </div>
-
-      <button type="submit" ng-disabled="taskForm.$invalid">შექმენი დავალება</button>
-    </form>
-  </div>
-
-</body>
-
-</html>
+    <button type="submit">შექმენი დავალება</button>
+  </form>
+</div>
