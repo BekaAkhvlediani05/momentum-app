@@ -52,10 +52,14 @@
         <div class="field-group">
           <label>ავატარი*</label>
           <div class="profile-upload">
-            <img ng-src="{{newEmployee.avatar || 'assets/default-avatar.png'}}" class="profile-preview">
-            <input type="file" id="avatarUpload" accept="image/*" ng-model="newEmployee.avatar">
+            <img ng-src="{{ newEmployee.avatar || 'assets/default-avatar.png' }}" class="profile-preview">
+            <input type="file" id="avatarUpload" accept="image/*"
+              onchange="angular.element(this).scope().uploadAvatar(this)">
           </div>
+          <p class="error-text" ng-show="avatarError">{{avatarError}}</p>
         </div>
+
+
 
         <div class="field-group">
           <label for="department">დეპარტამენტი*</label>

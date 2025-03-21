@@ -1,4 +1,4 @@
-app.controller("TaskController", function ($scope, DataService) {
+app.controller("TaskController", function ($scope, DataService, $http) {
   // მონაცემების ჩატვირთვა
   DataService.loadData(function () {
     $scope.$apply(function () {
@@ -32,14 +32,89 @@ app.controller("TaskController", function ($scope, DataService) {
 
   // **თანამშრომლის შენახვა**
   $scope.saveEmployee = function () {
-    console.log("✔ ახალი თანამშრომელი:", $scope.newEmployee);
-    $scope.closeEmployeeModal();
+    // Check if required fields are filled
+    if (!$scope.newEmployee.firstName || !$scope.newEmployee.lastName || !$scope.newEmployee.department) {
+      alert("❌ გთხოვთ, შეავსოთ ყველა სავალდებულო ველი!");
+      return;
+    }
+
+    // Prepare the API URL and token
+    var API_URL = "https://momentum.redberryinternship.ge/api/employees";
+    var TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817"; // ✅ API Token
+
+    // Create a new FormData object to send the data
+    var formData = new FormData();
+    formData.append("name", $scope.newEmployee.firstName); // Correct field name for first name
+    formData.append("surname", $scope.newEmployee.lastName); // Correct field name for surname
+    formData.append("department_id", $scope.newEmployee.department.id); // Correct field for department_id
+
+    // Add avatar file if selected
+    if ($scope.newEmployee.avatarFile) {
+      formData.append("avatar", $scope.newEmployee.avatarFile, $scope.newEmployee.avatarFile.name); // Correct field for avatar
+    } else {
+      alert("❌ გთხოვთ, აირჩიოთ სურათი!");
+      return;
+    }
+
+    // Set up the request config with Authorization and Content-Type headers
+    var config = {
+      headers: {
+        "Authorization": "Bearer " + TOKEN,
+        "Content-Type": undefined // Important: FormData should not have a content-type, it is handled automatically
+      }
+    };
+
+    // Send the POST request to the API
+    $http.post(API_URL, formData, config)
+      .then(function (response) {
+        console.log("✔ თანამშრომელი წარმატებით დაემატა:", response.data);
+        alert("✅ თანამშრომელი წარმატებით დაემატა!");
+
+        // Update the list of departments and employees from the API
+        DataService.loadData(function () {
+          $scope.$apply(function () {
+            $scope.departments = DataService.getDepartments();
+            $scope.employees = DataService.getEmployees();
+          });
+        });
+
+        // Close the modal
+        $scope.closeEmployeeModal();
+      })
+      .catch(function (error) {
+        console.error("🚨 თანამშრომლის დამატების შეცდომა:", error);
+        alert("❌ თანამშრომლის დამატება ვერ მოხერხდა.");
+      });
   };
+
+
 
   $scope.getStatus = function (statusId) {
     let status = $scope.statuses.find(s => s.id === statusId);
     return status ? status.name : "უცნობი სტატუსი";
   };
+  $scope.uploadAvatar = function (element) {
+    var file = element.files[0];
+    if (file) {
+      if (!file.type.match("image.*")) {
+        $scope.$apply(() => { $scope.avatarError = "❌ ფაილი უნდა იყოს სურათის ფორმატში."; });
+        return;
+      }
+      if (file.size > 600 * 1024) {
+        $scope.$apply(() => { $scope.avatarError = "❌ სურათი არ უნდა აღემატებოდეს 600KB-ს."; });
+        return;
+      }
+
+      $scope.$apply(() => {
+        $scope.newEmployee.avatarFile = file; // ✅ პირდაპირ ვინახავთ ფაილს
+        $scope.newEmployee.avatar = URL.createObjectURL(file); // ✅ ვქმნით პრევიუს
+        $scope.avatarError = "";
+      });
+    }
+  };
+
+
+
 
 
   $scope.getStatusClass = function (statusName) {
