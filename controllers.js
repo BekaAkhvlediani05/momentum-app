@@ -9,6 +9,34 @@ app.controller("TaskController", function ($scope, DataService, $http, $location
       $scope.employees = DataService.getEmployees();
     });
   });
+  // Function to get status name by ID
+  $scope.getStatus = function (statusId) {
+    let status = $scope.statuses.find(s => s.id === statusId);
+    return status ? status.name : "უცნობი სტატუსი";
+  };
+
+  // Function to get priority color
+  $scope.getPriorityColor = function (priorityId) {
+    let priority = $scope.priorities.find(p => p.id === priorityId);
+    return priority ? { text: "#000", border: priority.color } : { text: "#777777", border: "#777777" };
+  };
+
+  // Function to get department name by ID
+  $scope.getDepartment = function (departmentId) {
+    let department = $scope.departments.find(d => d.id === departmentId);
+    return department ? department.name : "უცნობი დეპარტამენტი";
+  };
+
+  // Function to get task border color based on status
+  $scope.getTaskBorderColor = function (statusId) {
+    switch (statusId) {
+      case 1: return "#f4b400"; // "დასაწყები" (ყვითელი)
+      case 2: return "#ff5722"; // "პროგრესში" (სტაფილოსფერი)
+      case 3: return "#ff007f"; // "მზად ტესტირებისთვის" (ვარდისფერი)
+      case 4: return "#4285f4"; // "დასრულებული" (ლურჯი)
+      default: return "#777777"; // უცნობი სტატუსი (ნაცრისფერი)
+    }
+  };
 
   // **📌 თანამშრომლის დამატების მოდალის მენეჯმენტი**
   $scope.isEmployeeModalOpen = false;
@@ -307,5 +335,66 @@ app.controller("TaskController", function ($scope, DataService, $http, $location
 
   $scope.getDepartmentIcon = function (departmentId) {
     return "";
+  };
+
+  app.controller("TaskCreationController", function ($scope, $http, $location, DataService) {
+
+    console.log("✅ TaskCreationController Loaded!"); // Debugging
+
+    $scope.newTask = {
+      title: "",
+      description: "",
+      priority: null,
+      status: null,
+      department: null,
+      employee: null,
+      dueDate: new Date().toISOString().split("T")[0]
+    };
+
+    // Fetch Priorities, Statuses, and Departments
+    DataService.loadData(function () {
+      $scope.$apply(function () {
+        $scope.priorities = DataService.getPriorities();
+        $scope.statuses = DataService.getStatuses();
+        $scope.departments = DataService.getDepartments();
+        $scope.employees = DataService.getEmployees();
+
+        // Debugging: Check if data is loaded
+        console.log("📌 Priorities:", $scope.priorities);
+        console.log("📌 Statuses:", $scope.statuses);
+        console.log("📌 Departments:", $scope.departments);
+        console.log("📌 Employees:", $scope.employees);
+      });
+    });
+  });
+  $scope.submitTask = function () {
+    if ($scope.taskForm.$valid) {
+      const API_URL = "https://momentum.redberryinternship.ge/api/tasks";
+      const TOKEN = "9e7a17a7-7273-4e19-b65e-c2099ef3d817";
+
+      const formData = new FormData();
+      formData.append("title", $scope.newTask.title);
+      formData.append("description", $scope.newTask.description);
+      formData.append("priority_id", $scope.newTask.priority.id);
+      formData.append("status_id", $scope.newTask.status.id);
+      formData.append("department_id", $scope.newTask.department.id);
+      formData.append("employee_id", $scope.newTask.employee.id);
+      formData.append("due_date", $scope.newTask.dueDate);
+
+      $http.post(API_URL, formData, {
+        headers: {
+          "Authorization": "Bearer " + TOKEN,
+          "Content-Type": undefined // Important for FormData
+        }
+      }).then(function (response) {
+        alert("✅ Task Created Successfully!");
+        $location.path('/tasks'); // Redirect to tasks page
+      }).catch(function (error) {
+        console.error("🚨 Error creating task:", error);
+        alert("❌ Failed to create task.");
+      });
+    } else {
+      alert("❌ Please fill in all required fields.");
+    }
   };
 });

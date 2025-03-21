@@ -1,5 +1,4 @@
 app.service("DataService", function ($rootScope) {
-  // Initialize appData object
   const appData = {
     statuses: [],
     priorities: [],
@@ -8,7 +7,6 @@ app.service("DataService", function ($rootScope) {
     tasks: []
   };
 
-  // Load Data function
   this.loadData = function (callback) {
     fetchData(function () {
       $rootScope.$apply();
@@ -28,36 +26,31 @@ app.service("DataService", function ($rootScope) {
     };
 
     Promise.all([
-      fetch(API_URL + "/statuses", httpOptions).then(res => res.json()).then(data => appData.statuses = data),
-      fetch(API_URL + "/priorities", httpOptions).then(res => res.json()).then(data => appData.priorities = data),
-      fetch(API_URL + "/departments", httpOptions).then(res => res.json()).then(data => appData.departments = data),
-      fetch(API_URL + "/employees", httpOptions).then(res => res.json()).then(data => appData.employees = data),
-      fetch(API_URL + "/tasks", httpOptions).then(res => res.json()).then(data => appData.tasks = data) // Fetch tasks here
+      fetch(API_URL + "/statuses", httpOptions).then(res => res.json()).then(data => {
+        console.log("📌 API Statuses:", data);
+        appData.statuses = data;
+      }),
+      fetch(API_URL + "/priorities", httpOptions).then(res => res.json()).then(data => {
+        console.log("📌 API Priorities:", data);
+        appData.priorities = data;
+      }),
+      fetch(API_URL + "/departments", httpOptions).then(res => res.json()).then(data => {
+        console.log("📌 API Departments:", data);
+        appData.departments = data;
+      }),
+      fetch(API_URL + "/employees", httpOptions).then(res => res.json()).then(data => {
+        console.log("📌 API Employees:", data);
+        appData.employees = data;
+      })
     ]).then(() => {
-      console.log("✅ Data Loaded:", appData);
+      console.log("✅ Data Loaded Successfully!");
       if (callback) callback();
     }).catch(error => console.error("🚨 API Load Error:", error));
   }
-
-
-  // Getter methods
-  this.getStatuses = function () {
-    return appData.statuses;
-  };
-
-  this.getPriorities = function () {
-    return appData.priorities;
-  };
-
-  this.getDepartments = function () {
-    return appData.departments;
-  };
-
-  this.getEmployees = function () {
-    return appData.employees;
-  };
-
-  this.getTasks = function () {
-    return appData.tasks;
-  };
+  // Getter functions
+  this.getStatuses = function () { return appData.statuses; };
+  this.getPriorities = function () { return appData.priorities; };
+  this.getDepartments = function () { return appData.departments; };
+  this.getEmployees = function () { return appData.employees; };
+  this.getTasks = function () { return appData.tasks; };
 });

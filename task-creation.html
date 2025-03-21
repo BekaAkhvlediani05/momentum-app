@@ -1,18 +1,81 @@
-<div class="task-creation-container">
-  <h2>დავალების შექმნა</h2>
-  <form name="taskForm" novalidate ng-submit="submitTask()">
-    <div class="field-group">
-      <label for="taskTitle">სათაური*</label>
-      <input type="text" id="taskTitle" ng-model="newTask.title" required>
-    </div>
+<div class="task-creation" ng-controller="TaskCreationController">
+  <div class="task-creation-container">
+    <header>
+      <h1 class="page-title">შექმენი ახალი დავალება</h1>
+    </header>
+    <div class="taskMainPage-container">
+      <div class="firstContainer">
+        <form name="taskForm" novalidate ng-submit="submitTask()">
+          <!-- სათაური -->
+          <div class="field-group">
+            <label for="taskTitle">სათაური*</label>
+            <input type="text" id="taskTitle" ng-model="newTask.title" required minlength="3" maxlength="255">
+            <p class="error-message" ng-show="taskForm.taskTitle.$error.required && taskForm.taskTitle.$dirty">სათაური
+              სავალდებულოა</p>
+            <p class="error-message" ng-show="taskForm.taskTitle.$error.minlength">მინიმუმ 3 სიმბოლო</p>
+            <p class="error-message" ng-show="taskForm.taskTitle.$error.maxlength">მაქსიმუმ 255 სიმბოლო</p>
+          </div>
 
-    <div class="field-group">
-      <label for="priority">პრიორიტეტი*</label>
-      <select id="priority" ng-model="newTask.priority" ng-options="priority.name for priority in priorities" required>
-        <option value="">აირჩიეთ პრიორიტეტი</option>
-      </select>
-    </div>
+          <!-- აღწერა -->
+          <div class="field-group">
+            <label for="taskDescription">აღწერა</label>
+            <textarea id="taskDescription" ng-model="newTask.description" ng-minlength="4"
+              ng-maxlength="255"></textarea>
+            <p class="error-message" ng-show="taskForm.taskDescription.$error.minlength">მინიმუმ 4 სიტყვა</p>
+            <p class="error-message" ng-show="taskForm.taskDescription.$error.maxlength">მაქსიმუმ 255 სიმბოლო</p>
+          </div>
 
-    <button type="submit">შექმენი დავალება</button>
-  </form>
+          <div class="firstChoiceContainer">
+            <!-- პრიორიტეტი -->
+            <div class="field-group">
+              <label for="priority">პრიორიტეტი*</label>
+              <select id="priority" ng-model="newTask.priority" ng-options="priority.name for priority in priorities"
+                required>
+                <option value="">აირჩიეთ პრიორიტეტი</option>
+              </select>
+            </div>
+
+            <!-- სტატუსი -->
+            <div class="field-group">
+              <label for="status">სტატუსი*</label>
+              <select id="status" ng-model="newTask.status" ng-options="status.name for status in statuses" required>
+                <option value="">აირჩიეთ სტატუსი</option>
+              </select>
+            </div>
+          </div>
+      </div>
+
+      <div class="secondContainer">
+        <!-- დეპარტამენტი -->
+        <div class="field-group">
+          <label for="department">დეპარტამენტი*</label>
+          <select id="department" ng-model="newTask.department"
+            ng-options="department.name for department in departments" required>
+            <option value="">აირჩიეთ დეპარტამენტი</option>
+          </select>
+        </div>
+
+        <!-- პასუხისმგებელი თანამშრომელი -->
+        <div class="field-group" ng-show="newTask.department">
+          <label for="employee">პასუხისმგებელი თანამშრომელი*</label>
+          <select id="employee" ng-model="newTask.employee" ng-options="employee.name for employee in filteredEmployees"
+            required>
+            <option value="">აირჩიეთ თანამშრომელი</option>
+          </select>
+        </div>
+
+
+        <!-- დედლაინი -->
+        <div class="field-group">
+          <label for="dueDate">დედლაინი*</label>
+          <input type="date" id="dueDate" ng-model="newTask.dueDate" min="{{ getMinDate() }}" required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" ng-disabled="taskForm.$invalid">დავალების შექმნა</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
