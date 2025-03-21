@@ -72,13 +72,12 @@
         <!-- დედლაინი -->
         <div class="field-group">
           <label for="dueDate">დედლაინი*</label>
-          <input type="date" id="dueDate" ng-model="newTask.dueDate"
-            ng-change="newTask.dueDate = formatDate(newTask.dueDate)" required>
+          <input type="date" id="dueDate" ng-model="newTask.dueDate">
 
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" ng-disabled="taskForm.$invalid">დავალების შექმნა</button>
+        <button type="submit" novalidate ng-click="submitTask()">დავალების შექმნა</button>
         </form>
       </div>
     </div>
