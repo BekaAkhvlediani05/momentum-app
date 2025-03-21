@@ -4,7 +4,36 @@ app.service("DataService", function ($rootScope) {
     priorities: [],
     departments: [],
     employees: [],
-    tasks: []
+    tasks: [{
+      id: 1,
+      title: "ლოგო დიზაინის განახლება",
+      description: "მომხმარებლისთვის ახალი ლოგოს კონცეფცია უნდა შევქმნათ.",
+      priority_id: 2,  // საშუალო
+      status_id: 1,  // დასაწყები
+      department_id: 3,  // დიზაინი
+      employee_id: 2,  // თანამშრომელი
+      due_date: "2024-03-30"
+    },
+    {
+      id: 2,
+      title: "საიტის ოპტიმიზაცია",
+      description: "ვებ გვერდის დატვირთვის სიჩქარის გაუმჯობესება.",
+      priority_id: 1,  // მაღალი
+      status_id: 2,  // პროგრესში
+      department_id: 4,  // IT
+      employee_id: 3,
+      due_date: "2024-04-02"
+    },
+    {
+      id: 3,
+      title: "მომხმარებლის გამოკითხვა",
+      description: "გამოვკითხოთ მომხმარებლები UX/UI დიზაინის შესახებ.",
+      priority_id: 3,  // დაბალი
+      status_id: 3,  // მზად ტესტირებისთვის
+      department_id: 1,  // მარკეტინგი
+      employee_id: 5,
+      due_date: "2024-04-05"
+    }]
   };
 
   this.loadData = function (callback) {
@@ -13,6 +42,7 @@ app.service("DataService", function ($rootScope) {
       if (callback) callback();
     });
   };
+
 
   function fetchData(callback) {
     var API_URL = "https://momentum.redberryinternship.ge/api";

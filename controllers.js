@@ -1,14 +1,31 @@
-app.controller("TaskController", function ($scope, DataService, $http, $location) {
-  // Load tasks from the DataService
+app.controller("TaskController", function ($scope, $http, $location, DataService) {
+  // Load Data on Page Load
   DataService.loadData(function () {
-    $scope.$apply(function () {
+    $scope.$applyAsync(function () {
       $scope.tasks = DataService.getTasks();
       $scope.statuses = DataService.getStatuses();
       $scope.priorities = DataService.getPriorities();
       $scope.departments = DataService.getDepartments();
       $scope.employees = DataService.getEmployees();
+
+      console.log("📌 Tasks Loaded:", $scope.tasks);
+      console.log("📌 Statuses:", $scope.statuses);
+      console.log("📌 Priorities:", $scope.priorities);
+      console.log("📌 Departments:", $scope.departments);
+      console.log("📌 Employees:", $scope.employees);
     });
   });
+
+  $scope.goToCreateTask = function () {
+    console.log("✅ Navigating to Task Creation Page...");
+    $location.path("/create-task");
+  };
+
+  $scope.goToHome = function () {
+    console.log("✅ Navigating to Home Page...");
+    $location.path("/tasks");
+  };
+
   // Function to get status name by ID
   $scope.getStatus = function (statusId) {
     let status = $scope.statuses.find(s => s.id === statusId);
@@ -374,10 +391,11 @@ app.controller("TaskCreationController", function ($scope, $http, $location, Dat
   $scope.$watch("newTask.department", function (newValue) {
     if (newValue) {
       $scope.filteredEmployees = $scope.employees.filter(employee => employee.department_id === newValue.id);
-      console.log("📌 Filtered Employees for Department:", $scope.filteredEmployees);
-      $scope.newTask.employee = null; // Reset employee selection when department changes
+      console.log("Filtered Employees:", $scope.filteredEmployees);
+      $scope.newTask.employee = null; // Reset employee selection
     }
   });
+
 
   // Function to submit the task
   $scope.submitTask = function () {
